@@ -162,7 +162,7 @@ def main():
 
         # Tạo mê cung và tìm đường đi
         num = random.randint(20,50)
-        random_matrix = np.random.randint(2, size=(num, num))
+        random_matrix = np.random.choice([0, 1], size=(num, num), p=[0.7, 0.3])
         start = ((random.randint(0, num-1)), (random.randint(0, num-1)))
         end = ((random.randint(0, num-1)), (random.randint(0, num-1)))
         random_matrix[end[0]][end[1]] = 0
