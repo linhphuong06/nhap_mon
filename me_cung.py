@@ -3,7 +3,6 @@ import numpy as np
 import random
 import time
 import psutil
-# import resource 
 import gc
 
 # Hàm tính khoảng cách Manhattan giữa hai điểm
@@ -12,6 +11,8 @@ def manhattan_distance(point1, point2):
 
 # Hàm tìm đường đi bằng thuật toán A*
 def astar(maze, start, end):
+    gc.collect()
+
     open_list = []  # Danh sách mở
     closed_list = []  # Danh sách đóng
     print(len(maze))
@@ -34,8 +35,12 @@ def astar(maze, start, end):
                 current_node = came_from[current_node]
             path.append(start)
             path.reverse()
-            memory_usage = psutil.virtual_memory().buffers
-            return path, memory_usage
+            # Thu gom bộ nhớ sau khi thực hiện xong thao tác
+            gc.collect()
+
+            # Lấy thông tin về bộ nhớ RAM sau khi thực hiện thao tác
+            memory_after = psutil.virtual_memory()
+            return path, memory_after
 
         closed_list.append(current_node)
 
@@ -58,10 +63,17 @@ def astar(maze, start, end):
                 if neighbor_node not in [node for (_, _, _, node) in open_list]:
                     heapq.heappush(open_list, (tentative_g + manhattan_distance(neighbor_node, end), tentative_g, manhattan_distance(neighbor_node, end), neighbor_node))
                     came_from[neighbor_node] = current_node
-    memory_usage = psutil.virtual_memory().buffers
-    return None, memory_usage  # Không tìm thấy đường đi
+    # Thu gom bộ nhớ sau khi thực hiện xong thao tác
+    gc.collect()
+
+    # Lấy thông tin về bộ nhớ RAM sau khi thực hiện thao tác
+    memory_after = psutil.virtual_memory()
+
+    # Tính sự khác biệt trong lượng bộ nhớ sử dụng
+    return None, memory_after  # Không tìm thấy đường đi
 def branch_and_bound(maze, start, end):
     gc.collect()
+
     cols = len(maze)
     open_list = [(0, start)]  # Hàng đợi ưu tiên với các bộ dữ liệu (chi phí, nút)
     heapq.heapify(open_list)
@@ -78,8 +90,13 @@ def branch_and_bound(maze, start, end):
                 current_node = came_from[current_node]
             path.append(start)
             path.reverse()
-            memory_usage = psutil.virtual_memory().buffers
-            return path , memory_usage
+            gc.collect()
+
+            # Lấy thông tin về bộ nhớ RAM sau khi thực hiện thao tác
+            memory_after = psutil.virtual_memory()
+
+            # Tính sự khác biệt trong lượng bộ nhớ sử dụng
+            return path , memory_after
 
         closed_list[current_node] = cost
 
@@ -96,8 +113,13 @@ def branch_and_bound(maze, start, end):
                     heapq.heappush(open_list, (new_cost + (abs(neighbor_node[0] - end[0]) + abs(neighbor_node[1] + end[1])), neighbor_node))
                     came_from[neighbor_node] = current_node
 
-    memory_usage = psutil.virtual_memory().buffers
-    return None, memory_usage
+    gc.collect()
+
+            # Lấy thông tin về bộ nhớ RAM sau khi thực hiện thao tác
+    memory_after = psutil.virtual_memory()
+
+            # Tính sự khác biệt trong lượng bộ nhớ sử dụng
+    return None, memory_after
 def dis(path, random_matrix, start, end):
     if path:
         count = 1
@@ -139,8 +161,7 @@ def main():
         # Bắt đầu đo thời gian
 
         # Tạo mê cung và tìm đường đi
-        num = random.randint(3,10)
-        # cols = random.randint(1, num)
+        num = random.randint(20,50)
         random_matrix = np.random.randint(2, size=(num, num))
         start = ((random.randint(0, num-1)), (random.randint(0, num-1)))
         end = ((random.randint(0, num-1)), (random.randint(0, num-1)))
@@ -178,8 +199,7 @@ def main():
         path, memory_usage = branch_and_bound(random_matrix, start, end)
         end_time = time.time()
         elapsed_time = end_time - start_time
-        # memory_usage = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        
+                
         print("\nNhanh cận:")
         dis(path, random_matrix, start, end)
         print("Thời gian thực thi:", elapsed_time, "giây")
