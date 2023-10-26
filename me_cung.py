@@ -138,9 +138,9 @@ def dis(path, random_matrix, start, end):
                     print("*", end=" ")
                     count += 1
                 elif random_matrix[row][col] == 0:
-                    print(".", end=" ")
+                    print("-", end=" ")
                 else:
-                    print("#", end=" ")
+                    print("|", end=" ")
             print()
         if (start == end): 
             print("Số bước đi ngắn nhất: 0")
@@ -154,9 +154,9 @@ def dis(path, random_matrix, start, end):
                 elif (row, col) == end:
                     print("E", end=" ")
                 elif random_matrix[row, col] == 1:
-                    print("#", end = " ")
+                    print("|", end = " ")
                 else:
-                    print(".", end= " ")
+                    print("-", end= " ")
             print() 
         print("Không tìm thấy đường đi.")
     
