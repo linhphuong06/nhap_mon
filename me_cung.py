@@ -64,10 +64,10 @@ def astar(maze, start, end):
                     heapq.heappush(open_list, (tentative_g + manhattan_distance(neighbor_node, end), tentative_g, manhattan_distance(neighbor_node, end), neighbor_node))
                     came_from[neighbor_node] = current_node
     # Thu gom bộ nhớ sau khi thực hiện xong thao tác
-    gc.collect()
 
     # Lấy thông tin về bộ nhớ RAM sau khi thực hiện thao tác
     memory_after = psutil.virtual_memory()
+    gc.collect()
 
     # Tính sự khác biệt trong lượng bộ nhớ sử dụng
     return None, memory_after  # Không tìm thấy đường đi
@@ -79,11 +79,12 @@ def branch_and_bound(maze, start, end):
     heapq.heapify(open_list)
     closed_list = {}
     came_from = {}
+    cost = float('inf')  # Khởi tạo cost là giá trị vô cùng
 
     while open_list:
-        cost, current_node = heapq.heappop(open_list)
+        current_cost, current_node = heapq.heappop(open_list)
         if current_node == end:
-            # Tạo lại đường dẫn từ điển 'cam_from'
+            # Tạo lại đường dẫn từ điển 'came_from'
             path = []
             while current_node in came_from:
                 path.append(current_node)
@@ -96,9 +97,9 @@ def branch_and_bound(maze, start, end):
             memory_after = psutil.virtual_memory()
 
             # Tính sự khác biệt trong lượng bộ nhớ sử dụng
-            return path , memory_after
+            return path, memory_after
 
-        closed_list[current_node] = cost
+        closed_list[current_node] = current_cost
 
         for dr, dc in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
             row, col = current_node
@@ -107,18 +108,22 @@ def branch_and_bound(maze, start, end):
             if 0 <= new_row < cols and 0 <= new_col < cols and maze[new_row][new_col] == 0:
                 neighbor_node = (new_row, new_col)
 
-                new_cost = cost + 1  # chi phi la 1
+                new_cost = current_cost + 1  # chi phi la 1
 
                 if neighbor_node not in closed_list or new_cost < closed_list[neighbor_node]:
                     heapq.heappush(open_list, (new_cost + manhattan_distance(neighbor_node, end), neighbor_node))
                     came_from[neighbor_node] = current_node
 
+                # Cập nhật cost nếu new_cost nhỏ hơn
+                if new_cost < cost:
+                    cost = new_cost
+
     gc.collect()
 
-            # Lấy thông tin về bộ nhớ RAM sau khi thực hiện thao tác
+    # Lấy thông tin về bộ nhớ RAM sau khi thực hiện thao tác
     memory_after = psutil.virtual_memory()
 
-            # Tính sự khác biệt trong lượng bộ nhớ sử dụng
+    # Tính sự khác biệt trong lượng bộ nhớ sử dụng
     return None, memory_after
 def dis(path, random_matrix, start, end):
     if path:
