@@ -110,7 +110,7 @@ def branch_and_bound(maze, start, end):
                 new_cost = cost + 1  # chi phi la 1
 
                 if neighbor_node not in closed_list or new_cost < closed_list[neighbor_node]:
-                    heapq.heappush(open_list, (new_cost + (abs(neighbor_node[0] - end[0]) + abs(neighbor_node[1] + end[1])), neighbor_node))
+                    heapq.heappush(open_list, (new_cost + manhattan_distance(neighbor_node, end), neighbor_node))
                     came_from[neighbor_node] = current_node
 
     gc.collect()
@@ -167,11 +167,7 @@ def main():
         end = ((random.randint(0, num-1)), (random.randint(0, num-1)))
         random_matrix[end[0]][end[1]] = 0
         random_matrix[start[0]][start[1]] = 0
-
         
-        # Dừng đo thời gian
-        
-
         print("Mê cung:",num)
         for row in range(len(random_matrix)):
             for col in range(len(random_matrix[0])):
