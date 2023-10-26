@@ -4,6 +4,7 @@ import random
 import time
 import psutil
 import gc
+from colorama import Fore,Back
 
 # Hàm tính khoảng cách Manhattan giữa hai điểm
 def manhattan_distance(point1, point2):
@@ -75,7 +76,7 @@ def branch_and_bound(maze, start, end):
     gc.collect()
 
     cols = len(maze)
-    open_list = [(0, start)]  # Hàng đợi ưu tiên với các bộ dữ liệu (chi phí, nút)
+    open_list = [(0, start)]  # Hàng đợi ưu tiên với các bộ dữ liệu (f, nút)
     heapq.heapify(open_list)
     closed_list = {}
     came_from = {}
@@ -131,16 +132,16 @@ def dis(path, random_matrix, start, end):
         for row in range(len(random_matrix)):
             for col in range(len(random_matrix[0])):
                 if (row, col) == start:
-                    print("S", end=" ")
+                    print(Back.RED+"S|"+Back.RESET, end="")
                 elif (row, col) == end:
-                    print("E", end=" ")
+                    print(Back.RED+"E|"+Back.RESET, end="")
                 elif (row, col) in path:
-                    print("*", end=" ")
+                    print(Back.RED+"_|" +Back.RESET, end="")
                     count += 1
                 elif random_matrix[row][col] == 0:
-                    print("-", end=" ")
+                    print(Back.WHITE+"_|"+Back.RESET, end="")
                 else:
-                    print("|", end=" ")
+                    print(Back.BLACK+"_|"+Back.RESET, end="")
             print()
         if (start == end): 
             print("Số bước đi ngắn nhất: 0")
@@ -149,14 +150,14 @@ def dis(path, random_matrix, start, end):
     else:
         for row in range(len(random_matrix)):
             for col in range(len(random_matrix[0])):
-                if (row,col) == start:
-                    print("S", end = " ")
+                if (row, col) == start:
+                    print(Back.RED+"S|"+Back.RESET, end="")
                 elif (row, col) == end:
-                    print("E", end=" ")
+                    print(Back.RED+"E|"+Back.RESET, end="")
                 elif random_matrix[row, col] == 1:
-                    print("|", end = " ")
+                    print(Back.WHITE+"_|"+Back.RESET, end="")
                 else:
-                    print("-", end= " ")
+                    print(Back.BLACK+"_|"+Back.RESET, end="")
             print() 
         print("Không tìm thấy đường đi.")
     
