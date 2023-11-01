@@ -155,12 +155,45 @@ def dis(path, random_matrix, start, end):
                 elif (row, col) == end:
                     print(Back.RED+"E|"+Back.RESET, end="")
                 elif random_matrix[row, col] == 1:
-                    print(Back.WHITE+"_|"+Back.RESET, end="")
-                else:
                     print(Back.BLACK+"_|"+Back.RESET, end="")
+                else:
+                    print(Back.WHITE+"_|"+Back.RESET, end="")
             print() 
         print("Không tìm thấy đường đi.")
     
+
+def create_maze(rows, cols):
+    # Tạo một ma trận maze ban đầu với tất cả các ô là tường
+    maze = np.zeros((rows, cols), dtype=int)
+
+    # Tạo đường đi ngang ngẫu nhiên
+    for i in range(rows):
+        random.seed(time.time())
+        a = random.randint(0,rows-2)
+        random.seed(time.time())
+        b = random.randint(0,int((rows - a)/2))
+        if (b<5):
+            random.seed(time.time())
+            a = random.randint(0,rows-3)
+            random.seed(time.time())
+            b = random.randint(3,15)
+            maze[a:(a+b),i] = 1
+        else:
+            maze[i,a:(a+b)] = 1
+
+    # Tạo các đường dọc ngẫu nhiên
+    maze[:,0] = 1
+    maze[0,:] = 1
+    maze[rows-1,:] = 1
+    maze[:,cols-1] = 1
+
+    # for i in range(1, rows, 2):
+    #     for j in range(2, cols, 2):
+    #         if np.random.randint(2):
+    #             maze[i, j] = 0
+
+    return maze
+
 def main():
     request = input("Nhập yêu cầu (start/ end): ")
     while (request == "start"):
@@ -168,9 +201,12 @@ def main():
 
         # Tạo mê cung và tìm đường đi
         num = random.randint(20,50)
-        random_matrix = np.random.choice([0, 1], size=(num, num), p=[0.7, 0.3])
-        start = ((random.randint(0, num-1)), (random.randint(0, num-1)))
-        end = ((random.randint(0, num-1)), (random.randint(0, num-1)))
+        # random_matrix = np.random.choice([0, 1], size=(num, num), p=[0.7, 0.3])
+
+        random_matrix = create_maze(num,num)
+
+        start = ((random.randint(1, num-2)), (random.randint(1, num-2)))
+        end = ((random.randint(1, num-2)), (random.randint(1, num-2)))
         random_matrix[end[0]][end[1]] = 0
         random_matrix[start[0]][start[1]] = 0
         
